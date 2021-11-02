@@ -16,7 +16,7 @@ class cndbTools:
     def __init__(self):
         self.Type_conversion = {'A1':0, 'A2':1, 'B1':2, 'B2':3,'B3':4,'B4':5, 'NA' :6}
         self.Type_conversionInv = {y:x for x,y in self.Type_conversion.items()}
-    
+
     def load(self, filename):
         R"""
         Receives the path to **cndb** or **ndb** file to perform analysis.
@@ -33,7 +33,11 @@ class cndbTools:
         self.cndb = h5py.File(filename, 'r')
         
         self.ChromSeq_numbers = np.array(self.cndb['types'])
-        self.ChromSeq = [self.Type_conversionInv[x] for x in self.ChromSeq_numbers]
+
+        if set(self.ChromSeq_numbers).issubset(self.Type_conversion.values()):
+            self.ChromSeq = [self.Type_conversionInv[x] for x in self.ChromSeq_numbers]
+        else:
+             self.ChromSeq = ["Bead" + str(x) for x in self.ChromSeq_numbers]
         self.uniqueChromSeq = set(self.ChromSeq)
         
         self.dictChromSeq = {}
